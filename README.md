@@ -1,0 +1,3 @@
+# flux_todo_list
+
+MakeToDoでは、画面遷移時の画面更新がreact-navigaitonを使用した場合に辛かったので、fluxを導入していい感じにした。
