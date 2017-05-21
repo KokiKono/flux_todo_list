@@ -10,22 +10,24 @@ class ToDoStore extends EventEmitter{
   handelActions(action){
     console.log('TodoStore received an action', action);
     switch(action.type){
-      case 'CREATE_TODO':{
+      case 'CREATE_TODO':
         this.addToDo(action.item);
         break;
-      }
-      case 'DELETE_TODO':{
+      case 'DELETE_TODO':
         this.deleteToDo(action.item);
         break;
-      }
     }
   }
   getAll(){
     return this.todos.sorted('id');
   }
   nextToDoId(){
-    let todos = this.getAll();
-    return todos.length+1;
+    let todos = realm.objects('ToDo').sorted('id',true);
+    if(todos.length == 0){
+      return 1;
+    }
+    let maxval = todos[0];
+    return maxval.id + 1;
   }
   addToDo(item){
     realm.write(()=>{
@@ -41,7 +43,7 @@ class ToDoStore extends EventEmitter{
     let tarTodo = todos.filtered('id = '+item.id);
     realm.write(() => {
       realm.delete(tarTodo)
-    })
+    });
     this.emit('change');
   }
 }
