@@ -4,7 +4,9 @@ import React from 'react';
 import {
   View,
   TouchableOpacity,
-  Text
+  Text,
+  TouchableHighlight,
+  StyleSheet
 } from 'react-native';
 import {
   List,
@@ -15,7 +17,8 @@ import ToDoStore from '../Stores/ToDoStore';
 import Icon from 'react-native-vector-icons/Octicons';
 import GlobalStyle from '../Styles/GlobalStyle';
 import {NavigationActions} from 'react-navigation';
-
+import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
+import * as ToDoAction from '../Actions/ToDoAction';
 export default class ToDoList extends React.Component{
   static navigationOptions = ({navigation})=>{
     const {navigate} = navigation;
@@ -42,37 +45,121 @@ export default class ToDoList extends React.Component{
   }
   constructor(props){
     super(props);
-    let dataSource=new ListView.DataSource({
-      rowHasChanged(a,b){
-        //ToDo名が異なる場合にのみ
-        return a.name !== b.name;
-      }
-    });
     this.state={
-      todos:ToDoStore.getAll()
+      todos: new ListView.DataSource({rowHasChanged:(r1,r2)=>r1!==r2})
     }
   }
   componentWillMount(){
     ToDoStore.on('change',()=>{
       this.setState({
-        todos:ToDoStore.getAll()
-      })
+        todos:this.state.todos.cloneWithRows(ToDoStore.getAll())
+      });
     })
+    this.setState({
+      todos:this.state.todos.cloneWithRows(ToDoStore.getAll())
+    });
   }
   render(){
     return(
       <View>
-        <List
-          dataArray={this.state.todos}
+        <ListView
+          dataSource={this.state.todos}
           renderRow={this.renderRow}/>
       </View>
-    )
+    );
   }
   renderRow(item,sectionIndex,rowIndex){
     return(
-      <ListItem>
-        <Text>{item.name}</Text>
-      </ListItem>
+      <View style={styles.standalone}>
+					<SwipeRow
+						leftOpenValue={75}
+						rightOpenValue={-150}
+					>
+						<View style={styles.standaloneRowBack}>
+            <Text>Left</Text>
+            <View style={[styles.backRightBtn, styles.backRightBtnLeft]}>
+                  <Text style={styles.backTextWhite}>Right</Text>
+                </View>
+                <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]}
+                  onPress={()=>{
+                    ToDoAction.deleteToDo(item);
+                  }}>
+                  <Text style={styles.backTextWhite}>Delete</Text>
+                </TouchableOpacity>
+						</View>
+						<View style={styles.standaloneRowFront}>
+							<Text>{item.name}</Text>
+						</View>
+					</SwipeRow>
+				</View>
     )
   }
 }
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: 'white',
+		flex: 1
+	},
+	standalone: {
+    borderBottomColor: '#CFCFCF',
+    borderBottomWidth: 1
+	},
+	standaloneRowFront: {
+		alignItems: 'center',
+		backgroundColor: '#FFFFFF',
+		justifyContent: 'center',
+		height: 50,
+	},
+	standaloneRowBack: {
+		alignItems: 'center',
+		backgroundColor: '#8BC645',
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		padding: 15
+	},
+	backTextWhite: {
+		color: '#FFF'
+	},
+	rowFront: {
+		alignItems: 'center',
+		backgroundColor: '#CCC',
+		borderBottomColor: 'black',
+		borderBottomWidth: 1,
+		justifyContent: 'center',
+		height: 50,
+	},
+	rowBack: {
+		alignItems: 'center',
+		backgroundColor: '#DDD',
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		paddingLeft: 15,
+	},
+	backRightBtn: {
+		alignItems: 'center',
+		bottom: 0,
+		justifyContent: 'center',
+		position: 'absolute',
+		top: 0,
+		width: 75
+	},
+	backRightBtnLeft: {
+		backgroundColor: 'blue',
+		right: 75
+	},
+	backRightBtnRight: {
+		backgroundColor: 'red',
+		right: 0
+	},
+	controls: {
+		alignItems: 'center',
+		marginBottom: 30
+	},
+	switchContainer: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		marginBottom: 5
+	},
+});
