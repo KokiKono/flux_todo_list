@@ -12,16 +12,36 @@ class ToDoStore extends EventEmitter{
     switch(action.type){
       case 'CREATE_TODO':{
         this.addToDo(action.item);
+        break;
+      }
+      case 'DELETE_TODO':{
+        this.deleteToDo(action.item);
+        break;
       }
     }
   }
   getAll(){
-    return this.todos;
+    return this.todos.sorted('id');
+  }
+  nextToDoId(){
+    let todos = this.getAll();
+    return todos.length+1;
   }
   addToDo(item){
     realm.write(()=>{
-      realm.create('ToDo',{name:item.name});
+      realm.create('ToDo',{
+        id:this.nextToDoId(),
+        name:item.name
+      });
     });
+    this.emit('change');
+  }
+  deleteToDo(item){
+    let todos = realm.objects('ToDo');
+    let tarTodo = todos.filtered('id = '+item.id);
+    realm.write(() => {
+      realm.delete(tarTodo)
+    })
     this.emit('change');
   }
 }
