@@ -22,7 +22,7 @@ class ToDoStore extends EventEmitter{
     return this.todos.sorted('id');
   }
   nextToDoId(){
-    let todos = realm.objects('ToDo').sorted('id',true);
+    let todos = this.todos.sorted('id',true);
     if(todos.length == 0){
       return 1;
     }
@@ -39,8 +39,7 @@ class ToDoStore extends EventEmitter{
     this.emit('change');
   }
   deleteToDo(item){
-    let todos = realm.objects('ToDo');
-    let tarTodo = todos.filtered('id = '+item.id);
+    let tarTodo = this.todos.filtered('id = '+item.id);
     realm.write(() => {
       realm.delete(tarTodo)
     });
