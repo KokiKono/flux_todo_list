@@ -13,7 +13,7 @@ import {
   Body,
   Right
 } from 'native-base';
-import Icon from 'react-native-vector-icons/Octicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../Styles/GlobalStyle';
 import {NavigationActions} from 'react-navigation';
