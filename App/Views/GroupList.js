@@ -9,9 +9,12 @@ import {
   TouchableOpacity
 } from 'react-native';
 import {
-  ListItem
+  ListItem,
+  Body,
+  Right
 } from 'native-base';
 import Icon from 'react-native-vector-icons/Octicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../Styles/GlobalStyle';
 import {NavigationActions} from 'react-navigation';
 
@@ -58,8 +61,16 @@ export default class GroupList extends React.Component{
   }
   renderRow(item,sectionIndex,rowIndex){
     return(
-      <ListItem>
-        <Text>{item.name}</Text>
+      <ListItem button
+        onPress={()=>{
+          console.log('hello');
+        }}>
+        <Body>
+          <Text>{item.name}</Text>
+        </Body>
+        <Right>
+          <Ionicons name='ios-arrow-forward'/>
+        </Right>
       </ListItem>
     );
   }
