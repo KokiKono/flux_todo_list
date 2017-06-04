@@ -15,7 +15,7 @@ import {
 } from 'native-base'
 import {ListView} from 'realm/react-native';
 import ToDoStore from '../Stores/ToDoStore';
-import Icon from 'react-native-vector-icons/Octicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GlobalStyle from '../Styles/GlobalStyle';
 import {NavigationActions} from 'react-navigation';
 import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
@@ -56,7 +56,7 @@ export default class ToDoList extends React.Component{
     }
   }
   componentWillMount(){
-    ToDoStore.on('change',()=>{
+    ToDoStore.on('ToDoStore.change',()=>{
       this.setState({
         dataSource:this.state.dataSource.cloneWithRows(ToDoStore.getAll())
       });
@@ -79,6 +79,7 @@ export default class ToDoList extends React.Component{
         content={<GroupList/>}
         >
         <ToDoListView
+          {...this.props}
           dataSource={this.state.dataSource}/>
       </Drawer>
     );
@@ -111,7 +112,11 @@ class ToDoListView extends React.Component{
         sectionIndex={sectionIndex}
         autoClose={true}
         >
-        <ListItem>
+        <ListItem
+          button
+          onPress={()=>{
+            this.props.navigation.navigate('ToDoDetail',{item:item});
+          }}>
           <Text>{item.name}</Text>
         </ListItem>
       </Swipeout>
