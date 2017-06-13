@@ -7,6 +7,7 @@ import GroupInput from './Views/GroupInput';
 import ToDoEdit from './Views/ToDoEdit';
 import ToDoDetail from './Views/ToDoDetail';
 
+
 const App = StackNavigator({
   ToDoList:{screen:ToDoList},
   ToDoInput:{screen:ToDoInput},
