@@ -19,6 +19,12 @@ class DraftToDoStore extends EventEmitter{
       case 'CAHNGE_TODO_NAME':
         this.changeToDoName(action.item);
         break;
+      case 'REMOVE_DRAFT_IMAGE':
+        this.removeDraftImage(action.item);
+        break;
+      case 'UPDATE_IMAGE':
+        this.updateImage(action.item);
+        break;
     }
   }
   getDraft(){
@@ -38,17 +44,56 @@ class DraftToDoStore extends EventEmitter{
     this._addImage(image);
     this.emit('DraftToDoStore.change');
   }
+  removeDraftImage(image){
+    this.images.forEach((val,index,array)=>{
+      if(val.id==image.id){
+        array.splice(index,1);
+        this.emit('DraftToDoStore.change');
+      }
+    });
+  }
+  updateImage(image){
+    this.images.forEach((val,index,array)=>{
+      if(val.id==image.id){
+        val.title=image.title;
+        val.source=image.source;
+        val.uri=image.uri;
+        val.origURL=image.origURL;
+        val.path=image.path
+        this.emit('DraftToDoStore.change');
+      }
+    });
+  }
   _addImage(image){
     this.images.push({
       id:this.images.length+1,
       title:'none',
-      source:null,
-      uri:image.uri
+      source:image.source,
+      uri:image.uri,
+      origURL:image.origURL,
+      path:image.path,
+      latitude:image.latitude,
+      longitude:image.longitude
     });
   }
   changeToDoName(name){
     this.name=name;
     this.emit('DraftToDoStore.change');
+  }
+  nextImageId(){
+    let draftId=this.images.length+1;
+    while(true){
+      if(indexOf(draftId)==-1){
+        return draftId;
+      }
+      draftId++;
+    }
+  }
+  indexOf(id){
+    this.images.forEach((val,index,array)=>{
+      if(val.id==id){return index;}
+    });ß
+    return -1;
   }
 }
 
