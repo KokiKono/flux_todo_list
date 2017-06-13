@@ -34,8 +34,14 @@ export default class ToDoEdit extends React.Component {
     const {
       navigate
     } = navigation;
-    console.log(navigation);
     return {
+      headerLeft:(
+        <TouchableOpacity
+          onPress={()=>{navigation.goBack(null);}}
+          >
+          <Text style={[GlobalStyle.linkView,GlobalStyle.leftView]}>Cancel</Text>
+        </TouchableOpacity>
+      ),
       title:  'ToDo Edit',
       headerRight: (<SaveIcon
         {...navigation}/>)
@@ -81,8 +87,16 @@ export default class ToDoEdit extends React.Component {
             </Item>
             <Item>
               <ScrollableImageView
+                edit
                 images={this.state.draftToDo.images}
-                onPressCamera={ this.onWillSelectCamera.bind(this) }/>
+                onPressCamera={ this.onWillSelectCamera.bind(this) }
+                onDelete={(image,imageIndex)=>{
+                  DraftToDoAction.removeDraftImage(image);
+                }}
+                onEndEditing={(image,index,text)=>{
+                  image.title=text;
+                  DraftToDoAction.updateImage(image);
+                }}/>
             </Item>
           </Form>
 
@@ -107,8 +121,12 @@ export default class ToDoEdit extends React.Component {
       }else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       }else {
+        console.log('showImagePicker',response);
         let source = { uri: response.uri };
-        DraftToDoAction.addDraftImage(source);
+        //response.data='data:image/jpeg;base64,' + response.data;
+        //response.data={ uri: 'data:image/jpeg;base64,' + response.data };
+        response.source='data:image/jpeg;base64,' + response.data;
+        DraftToDoAction.addDraftImage(response);
       }
     });
   }
@@ -158,6 +176,8 @@ const CopyToDoImage=function(image){
   this.title=image.title;
   this.source=image.source;
   this.uri=image.uri;
+  this.origURL=image.origURL;
+  this.path=image.path;
 }
 const styles = StyleSheet.create({
   todo_item:{
