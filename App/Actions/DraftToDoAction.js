@@ -9,3 +9,9 @@ export function addDraftImage(item){
 export function changeToDoName(item){
   dispatcher.dispatch({type:'CAHNGE_TODO_NAME',item});
 }
+export function removeDraftImage(item){
+  dispatcher.dispatch({type:'REMOVE_DRAFT_IMAGE',item});
+}
+export function updateImage(item){
+  dispatcher.dispatch({type:'UPDATE_IMAGE',item});
+}
